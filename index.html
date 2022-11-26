@@ -4,10 +4,33 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
   <title>Rock | Paper | Scissors</title>
 </head>
 <body>
-  
+  <div id="main">
+    <div class="cards flex">
+      <button class="btn" id="rock">Rock</button>
+      <button class="btn" id="paper">Paper</button>
+      <button class="btn" id="scissors">Scissors</button>
+    </div>
+    <div id="display">
+      <div class="comp result">
+        <p><span>Computer</span> results !</p>
+        <div class="choice box">---</div>
+        <div class="points box">0</div>
+      </div>
+      
+      <div class="user result">
+        <p><span>Your</span> results !</p>
+        <div class="choice box">---</div>
+        <div class="points box">0</div>
+      </div>
+    </div>
+    <div class="pop-up flex">
+      Let's Go!
+    </div>
+  </div>
   <script src="./script.js"></script>
 </body>
 </html>

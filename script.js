@@ -1,98 +1,118 @@
-/* *************************
-
+/*
       Rock Paper Scissors ... GAME
+##################################### */
 
-  ************************* */
-
-
-// to get computer choice
 function getComputerChoice(){
-  const choice = Math.floor (Math.random() * 3);
+  const choices =['rock', 'paper', 'scissors'];
+  return choices[Math.floor(Math.random() * 3)];
+}
 
-  switch (choice) {
-    case 0:
-      return "rock";
-      break;
-    case 1:
-      return "paper";
-      break;
-    case 2:
-      return "scissors";
-      break;
-  }
+/*
+Getting variables from document
+*/
+const buttons = document.querySelectorAll('.btn');
+
+const compChoiceDisplay = document.getElementsByClassName('choice')[0];
+const userChoiceDisplay = document.getElementsByClassName('choice')[1];
+
+const compPointsDisplay = document.getElementsByClassName('points')[0];
+const userPointsDisplay = document.getElementsByClassName('points')[1];
+const popUp = document.querySelector('.pop-up');
+/*
+Changing GUI Displays
+ */
+let compWin = 0;
+let userWin = 0;
+let compChoice;
+
+function displays(choice, e){
+
+  //To make first letter uppercase
+  compChoiceDisplay.innerText = choice.slice(0,1).toUpperCase() + choice.slice(1);
+
+  userChoiceDisplay.innerText = e.target.innerText;
+  compPointsDisplay.innerText = compWin;
+  userPointsDisplay.innerText = userWin;
 };
 
-// single round of gamePlay!
-
 function playRound(compSelection, playerSelection){
+
   if(compSelection === playerSelection){
-    return [3,`It's draw game the computer also played ${compSelection}`];
+    popUp.innerText = `It's draw game the computer also played ${compSelection}`;
   }
   
   else {
     switch (true){
+      //User win cases
       case (compSelection === "rock" && playerSelection === "paper"):
-            return [1,`You won ${playerSelection} beats ${compSelection}!!`];
       case (compSelection === "paper" && playerSelection === "scissors"):
-            return [1,`You won ${playerSelection} beats ${compSelection}!!`];
       case (compSelection === "scissors" && playerSelection === "rock"):
-            return [1,`You won ${playerSelection} beats ${compSelection}!!`];
+        popUp.innerHTML = `<p> You won!! ${playerSelection} beats ${compSelection}!! </p>`;
+        userWin++;
         break;
+
+      //Computer win cases
       case (compSelection === "rock" && playerSelection === "scissors"):
-            return [2,`You loose ${compSelection} beats ${playerSelection}!!`];
       case (compSelection === "paper" && playerSelection === "rock"):
-            return [2,`You loose ${compSelection} beats ${playerSelection}!!`];
       case (compSelection === "scissors" && playerSelection === "paper"):
-            return [2,`You loose ${compSelection} beats ${playerSelection}!!`];
-        break;
-      default:
-        return [3,"You Entered Wrong selection!"];
+        popUp.innerHTML = `<p> You loose ${compSelection} beats ${playerSelection}!! </p>`;
+        compWin++;
         break;
     }
   }
 }
 
-// function to play 5 rounds
-function game(rounds){
-  let compWin= 0;
-  let userWin = 0;
+// FUNCTION TO PLAY 5 ROUNDS
+function game(buttons){
+  buttons.forEach(btn => {
+    btn.addEventListener('click',e=>{
+        compChoice = getComputerChoice();
 
-  for(let i=0; i<5; i++){
+        playRound(compChoice, e.target.innerText.toLowerCase());
+        displays(compChoice, e);
+        popUp.classList.remove('none');
+        setTimeout(()=> popUp.classList.add('none'),1000);
 
-    // getting user choice
-  let userChoice = prompt("Enter Your Choice");
-      userChoice = userChoice.toLowerCase();
+        if(compWin === 5 || userWin === 5){
+          
+          let last = document.createElement('div');
+          last.setAttribute('class','last flex');
 
-  rounds = playRound(getComputerChoice(), userChoice);
-  
-  const [digit, text] = rounds;
+          let finalRes = document.createElement('div');
+          last.appendChild(finalRes);
+          finalRes.classList.add('finals');
 
-  if(digit === 1){
-  userWin++;
-  console.log(text);
+          document.body.appendChild(last);
+
+          let confButton = document.createElement('button');
+          confButton.classList.add('confirm');
+          confButton.innerText = 'Confirm';
+
+          confButton.onclick = ()=> location.reload();
+
+          let cancButton = document.createElement('button');
+          cancButton.classList.add('cancel');
+          cancButton.innerText = 'Cancel';
+
+          if(compWin == 5 && userWin < 5){
+            cancButton.onclick = ()=>{
+              last.style.display = 'none';
+            };
+            finalRes.innerHTML = '<p>You loose! Play Again?</p>';
+            finalRes.append(confButton, cancButton);
+          }
+          if(userWin == 5 && compWin < 5){
+            cancButton.onclick = ()=>{
+              last.style.display = 'none';
+            };
+            finalRes.innerHTML = '<p>Congratulation! You Won.. Play Again?</p>';
+            finalRes.append(confButton, cancButton);
+          } else {
+            finalRes.innerHTML = '<p>Play Again?</p>';
+            finalRes.appendChild(confButton);
+          }
+        };
+      });
+  });
 }
-
-  else if(digit === 2){
-  compWin++;
-  console.log(text);
-} 
-
-  else {
-    console.log(text);
-}
-}
-
-if(userWin > compWin){
-  alert("You Won! Congratulations");
-} 
-else if(userWin == compWin){
-  alert("!! It's Draw Game");
-}
-else {
-  confirm("You Lost! But can still try..."+"\n"+"Try again??");
-  if(true){
-    game();
-  }
-}
-}
-game();
+game(buttons);
